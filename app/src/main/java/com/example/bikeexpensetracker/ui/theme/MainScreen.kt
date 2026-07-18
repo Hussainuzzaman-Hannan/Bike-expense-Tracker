@@ -168,6 +168,9 @@ fun MainScreen(
                     onSaveSuccess = {
                         navController.popBackStack()
                     },
+                    onViewHistory = {
+                        navController.navigate(Screen.MaintenanceHistory.route)
+                    },
                     viewModel = maintenanceViewModel
                 )
             }

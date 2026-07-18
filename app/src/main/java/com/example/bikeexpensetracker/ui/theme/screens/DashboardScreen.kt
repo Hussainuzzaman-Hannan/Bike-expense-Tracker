@@ -612,7 +612,7 @@ fun RecentExpensesSection(
             TextButton(
                 onClick = onViewAllMaintenance
             ) {
-                Text("View All", fontSize = 12.sp)
+                Text("Maintenance History", fontSize = 12.sp)
             }
         }
 

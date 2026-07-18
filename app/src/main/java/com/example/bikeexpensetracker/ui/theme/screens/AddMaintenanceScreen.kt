@@ -28,6 +28,7 @@ import java.util.*
 fun AddMaintenanceScreen(
     onBackClick: () -> Unit,
     onSaveSuccess: () -> Unit,
+    onViewHistory: () -> Unit = {},
     viewModel: MaintenanceViewModel = viewModel()
 ) {
     val scope = rememberCoroutineScope()
@@ -62,10 +63,19 @@ fun AddMaintenanceScreen(
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
+                actions = {
+                    IconButton(onClick = onViewHistory) {
+                        Icon(
+                            Icons.Default.History,
+                            contentDescription = "Maintenance History"
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
+                    navigationIconContentColor = Color.White,
+                    actionIconContentColor = Color.White
                 )
             )
         },
