@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bikeexpensetracker.data.BikeExpenseDatabase
+import com.example.bikeexpensetracker.data.SelectedBikeManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -44,12 +45,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             _isResetting.value = true
             try {
-                // Delete all fuel entries
-                database.fuelEntryDao().deleteAllFuelEntries(1)
-                // Delete all maintenance entries
-                database.maintenanceDao().deleteAllMaintenanceEntries(1)
-                // Reset bike name to default
-                saveBikeName(DEFAULT_BIKE_NAME)
+                val bikeId = SelectedBikeManager.getSelectedBikeId()
+                // Delete all fuel entries for the selected bike
+                database.fuelEntryDao().deleteAllFuelEntries(bikeId)
+                // Delete all maintenance entries for the selected bike
+                database.maintenanceDao().deleteAllMaintenanceEntries(bikeId)
                 _resetSuccess.value = true
             } catch (e: Exception) {
                 e.printStackTrace()

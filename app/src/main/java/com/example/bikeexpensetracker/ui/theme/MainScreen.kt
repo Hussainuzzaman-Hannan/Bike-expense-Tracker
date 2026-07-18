@@ -20,6 +20,7 @@ import com.example.bikeexpensetracker.navigation.Screen
 import com.example.bikeexpensetracker.navigation.screens
 import com.example.bikeexpensetracker.ui.screens.*
 import com.example.bikeexpensetracker.viewmodel.AnalyticsViewModel
+import com.example.bikeexpensetracker.viewmodel.BikeViewModel
 import com.example.bikeexpensetracker.viewmodel.ReminderViewModel
 import com.example.bikeexpensetracker.viewmodel.SettingsViewModel
 
@@ -52,7 +53,8 @@ fun MainScreen(
     maintenanceViewModel: com.example.bikeexpensetracker.viewmodel.MaintenanceViewModel,
     analyticsViewModel: AnalyticsViewModel,
     reminderViewModel: ReminderViewModel,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    bikeViewModel: BikeViewModel
 ) {
     val navController = rememberNavController()
     val currentRoute = currentRoute(navController)
@@ -108,7 +110,7 @@ fun MainScreen(
             ) {
                 DashboardScreen(
                     viewModel = expenseViewModel,
-                    settingsViewModel = settingsViewModel,
+                    bikeViewModel = bikeViewModel,
                     onAddFuelClick = {
                         navController.navigate(Screen.AddFuel.route)
                     },
@@ -117,6 +119,9 @@ fun MainScreen(
                     },
                     onViewMaintenanceHistoryClick = {
                         navController.navigate(Screen.MaintenanceHistory.route)
+                    },
+                    onManageBikesClick = {
+                        navController.navigate(Screen.BikeProfiles.route)
                     }
                 )
             }
@@ -235,7 +240,27 @@ fun MainScreen(
                     onBackClick = {
                         navController.popBackStack()
                     },
-                    viewModel = settingsViewModel
+                    onManageBikesClick = {
+                        navController.navigate(Screen.BikeProfiles.route)
+                    },
+                    viewModel = settingsViewModel,
+                    bikeViewModel = bikeViewModel
+                )
+            }
+
+            // Bike Profiles Screen
+            composable(
+                route = Screen.BikeProfiles.route,
+                enterTransition = { enterTransition },
+                exitTransition = { exitTransition },
+                popEnterTransition = { popEnterTransition },
+                popExitTransition = { popExitTransition }
+            ) {
+                BikeProfilesScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    viewModel = bikeViewModel
                 )
             }
         }

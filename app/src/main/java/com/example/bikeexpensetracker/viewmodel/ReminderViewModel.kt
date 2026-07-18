@@ -4,26 +4,32 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bikeexpensetracker.data.BikeExpenseDatabase
+import com.example.bikeexpensetracker.data.SelectedBikeManager
 import com.example.bikeexpensetracker.model.MaintenanceReminder
 import com.example.bikeexpensetracker.model.ReminderType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 class ReminderViewModel(application: Application) : AndroidViewModel(application) {
     private val database = BikeExpenseDatabase.getDatabase(application)
 
-    val reminders: Flow<List<MaintenanceReminder>> = database.maintenanceReminderDao().getActiveReminders()
+    val reminders: Flow<List<MaintenanceReminder>> = SelectedBikeManager.selectedBikeId.flatMapLatest { bikeId ->
+        database.maintenanceReminderDao().getActiveRemindersByBike(bikeId)
+    }
 
     fun addReminder(title: String, type: ReminderType, intervalKm: Int) {
         viewModelScope.launch {
             try {
-                // Get current odometer from latest fuel entry - Fixed here
-                val latestFuelEntry = database.fuelEntryDao().getLastFuelEntry().firstOrNull()
+                val bikeId = SelectedBikeManager.getSelectedBikeId()
+                // Get current odometer from latest fuel entry of the selected bike
+                val latestFuelEntry = database.fuelEntryDao().getFuelEntriesByBike(bikeId).firstOrNull()?.firstOrNull()
                 val currentOdometer = latestFuelEntry?.odometer ?: 0
 
                 val reminder = MaintenanceReminder(
+                    bikeId = bikeId,
                     title = title,
                     reminderType = type,
                     dueOdometer = currentOdometer + intervalKm,
@@ -62,7 +68,8 @@ class ReminderViewModel(application: Application) : AndroidViewModel(application
     fun updateOdometerForReminders(odometer: Int) {
         viewModelScope.launch {
             try {
-                val reminders = database.maintenanceReminderDao().getActiveReminders().firstOrNull() ?: return@launch
+                val bikeId = SelectedBikeManager.getSelectedBikeId()
+                val reminders = database.maintenanceReminderDao().getActiveRemindersByBike(bikeId).firstOrNull() ?: return@launch
                 reminders.forEach { reminder ->
                     database.maintenanceReminderDao().updateCurrentOdometer(reminder.id, odometer)
                 }

@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bikeexpensetracker.data.BikeExpenseDatabase
+import com.example.bikeexpensetracker.data.SelectedBikeManager
 import com.example.bikeexpensetracker.model.Expense
 import com.example.bikeexpensetracker.model.ExpenseCategory
 import com.example.bikeexpensetracker.model.FuelEntry
@@ -18,8 +19,10 @@ class ExpenseViewModel(application: Application) : AndroidViewModel(application)
     private val _expenses = MutableStateFlow<List<Expense>>(emptyList())
     val expenses: StateFlow<List<Expense>> = _expenses.asStateFlow()
 
-    // Get all fuel entries from FuelEntry table
-    val fuelEntries: Flow<List<FuelEntry>> = database.fuelEntryDao().getAllFuelEntries()
+    // Get fuel entries for the currently selected bike (updates when the bike is switched)
+    val fuelEntries: Flow<List<FuelEntry>> = SelectedBikeManager.selectedBikeId.flatMapLatest { bikeId ->
+        database.fuelEntryDao().getFuelEntriesByBike(bikeId)
+    }
 
     private val _totalExpenses = MutableStateFlow(0.0)
     val totalExpenses: StateFlow<Double> = _totalExpenses.asStateFlow()
@@ -27,8 +30,9 @@ class ExpenseViewModel(application: Application) : AndroidViewModel(application)
     private val _isAddingExpense = MutableStateFlow(false)
     val isAddingExpense: StateFlow<Boolean> = _isAddingExpense.asStateFlow()
 
-    // Real-time fuel cost - ensure it never emits null
-    val totalFuelCost: StateFlow<Double> = database.fuelEntryDao().getTotalFuelCost(1)
+    // Real-time fuel cost for the selected bike - ensure it never emits null
+    val totalFuelCost: StateFlow<Double> = SelectedBikeManager.selectedBikeId
+        .flatMapLatest { bikeId -> database.fuelEntryDao().getTotalFuelCost(bikeId) }
         .catch { emit(0.0) }
         .stateIn(
             scope = viewModelScope,
@@ -36,8 +40,9 @@ class ExpenseViewModel(application: Application) : AndroidViewModel(application)
             initialValue = 0.0
         )
 
-    // Real-time maintenance cost - get from database
-    val totalMaintenanceCost: StateFlow<Double> = database.maintenanceDao().getTotalMaintenanceCost(1)
+    // Real-time maintenance cost for the selected bike
+    val totalMaintenanceCost: StateFlow<Double> = SelectedBikeManager.selectedBikeId
+        .flatMapLatest { bikeId -> database.maintenanceDao().getTotalMaintenanceCost(bikeId) }
         .catch { emit(0.0) }
         .stateIn(
             scope = viewModelScope,

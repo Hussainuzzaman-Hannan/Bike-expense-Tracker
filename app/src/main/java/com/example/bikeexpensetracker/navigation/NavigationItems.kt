@@ -13,6 +13,7 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
     object Analytics : Screen("analytics", "Analytics", Icons.Default.BarChart)
     object Reminders : Screen("reminders", "Reminders", Icons.Default.Notifications)
     object Settings : Screen("settings", "Settings", Icons.Default.Settings)  // Settings added
+    object BikeProfiles : Screen("bike_profiles", "My Bikes", Icons.Default.DirectionsBike)
 }
 
 val screens = listOf(

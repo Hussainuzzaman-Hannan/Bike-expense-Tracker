@@ -16,6 +16,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bikeexpensetracker.ui.MainScreen
 import com.example.bikeexpensetracker.ui.theme.BikeExpenseTrackerTheme
 import com.example.bikeexpensetracker.viewmodel.AnalyticsViewModel
+import com.example.bikeexpensetracker.viewmodel.BikeViewModel
+import com.example.bikeexpensetracker.viewmodel.BikeViewModelFactory
 import com.example.bikeexpensetracker.viewmodel.ExpenseViewModel
 import com.example.bikeexpensetracker.viewmodel.FuelViewModel
 import com.example.bikeexpensetracker.viewmodel.MaintenanceViewModel
@@ -61,6 +63,9 @@ fun BikeExpenseApp() {
     val settingsViewModel: SettingsViewModel = viewModel(
         factory = SettingsViewModelFactory(context)
     )
+    val bikeViewModel: BikeViewModel = viewModel(
+        factory = BikeViewModelFactory(context)
+    )
 
     // Use MainScreen with bottom navigation
     MainScreen(
@@ -69,7 +74,8 @@ fun BikeExpenseApp() {
         maintenanceViewModel = maintenanceViewModel,
         analyticsViewModel = analyticsViewModel,
         reminderViewModel = reminderViewModel,
-        settingsViewModel = settingsViewModel
+        settingsViewModel = settingsViewModel,
+        bikeViewModel = bikeViewModel
     )
 }
 

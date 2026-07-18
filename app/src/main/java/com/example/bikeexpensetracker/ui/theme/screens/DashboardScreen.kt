@@ -2,6 +2,7 @@
 
 package com.example.bikeexpensetracker.ui.screens
 
+import com.example.bikeexpensetracker.viewmodel.BikeViewModel
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -43,9 +44,11 @@ import kotlin.math.abs
 fun DashboardScreen(
     viewModel: ExpenseViewModel = viewModel(),
     settingsViewModel: SettingsViewModel = viewModel(),
+    bikeViewModel: BikeViewModel = viewModel(),
     onAddFuelClick: () -> Unit = {},
     onAddOtherExpenseClick: () -> Unit = {},
-    onViewMaintenanceHistoryClick: () -> Unit = {}
+    onViewMaintenanceHistoryClick: () -> Unit = {},
+    onManageBikesClick: () -> Unit = {}
 ) {
     val expenses by viewModel.expenses.collectAsState()
     val isAddingExpense by viewModel.isAddingExpense.collectAsState()
@@ -55,8 +58,9 @@ fun DashboardScreen(
     val totalMaintenanceCost by viewModel.totalMaintenanceCost.collectAsState(initial = 0.0)
     val averageMileage by viewModel.averageMileage.collectAsState(initial = 0.0)
 
-    // Get bike name from SettingsViewModel
-    val bikeName by settingsViewModel.bikeName.collectAsState()
+    // Get selected bike from BikeViewModel
+    val selectedBike by bikeViewModel.selectedBike.collectAsState()
+    val bikeName = selectedBike?.name ?: "My Bike"
 
     // State for FAB expansion
     var fabExpanded by remember { mutableStateOf(false) }
@@ -86,6 +90,15 @@ fun DashboardScreen(
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
                     )
+                },
+                actions = {
+                    IconButton(onClick = onManageBikesClick) {
+                        Icon(
+                            Icons.Default.DirectionsBike,
+                            contentDescription = "Manage Bikes",
+                            tint = Color.White
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -210,7 +223,7 @@ fun DashboardScreen(
             // Hero Section with Bike Info
             item {
                 BikeInfoHeader(
-                    totalDistance = 2450,
+                    totalDistance = selectedBike?.totalKm ?: 0,
                     averageMileage = averageMileage,
                     bikeName = bikeName
                 )

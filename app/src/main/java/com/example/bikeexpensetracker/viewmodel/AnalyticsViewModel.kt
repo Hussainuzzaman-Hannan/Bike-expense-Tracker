@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bikeexpensetracker.data.BikeExpenseDatabase
+import com.example.bikeexpensetracker.data.SelectedBikeManager
 import com.example.bikeexpensetracker.model.FuelEntry
 import com.example.bikeexpensetracker.ui.components.MileageDataPoint
 import kotlinx.coroutines.flow.*
@@ -12,8 +13,9 @@ import java.util.*
 class AnalyticsViewModel(application: Application) : AndroidViewModel(application) {
     private val database = BikeExpenseDatabase.getDatabase(application)
 
-    // Get total fuel cost from database
-    val totalFuelCost: StateFlow<Double> = database.fuelEntryDao().getTotalFuelCost(1)
+    // Get total fuel cost for the selected bike
+    val totalFuelCost: StateFlow<Double> = SelectedBikeManager.selectedBikeId
+        .flatMapLatest { bikeId -> database.fuelEntryDao().getTotalFuelCost(bikeId) }
         .catch { emit(0.0) }
         .stateIn(
             scope = viewModelScope,
@@ -21,8 +23,9 @@ class AnalyticsViewModel(application: Application) : AndroidViewModel(applicatio
             initialValue = 0.0
         )
 
-    // Get total maintenance cost from database
-    val totalMaintenanceCost: StateFlow<Double> = database.maintenanceDao().getTotalMaintenanceCost(1)
+    // Get total maintenance cost for the selected bike
+    val totalMaintenanceCost: StateFlow<Double> = SelectedBikeManager.selectedBikeId
+        .flatMapLatest { bikeId -> database.maintenanceDao().getTotalMaintenanceCost(bikeId) }
         .catch { emit(0.0) }
         .stateIn(
             scope = viewModelScope,
@@ -30,9 +33,9 @@ class AnalyticsViewModel(application: Application) : AndroidViewModel(applicatio
             initialValue = 0.0
         )
 
-    // Get mileage trend data from database
-    val mileageTrendData: StateFlow<List<MileageDataPoint>> = database.fuelEntryDao()
-        .getAllFuelEntries()
+    // Get mileage trend data for the selected bike
+    val mileageTrendData: StateFlow<List<MileageDataPoint>> = SelectedBikeManager.selectedBikeId
+        .flatMapLatest { bikeId -> database.fuelEntryDao().getFuelEntriesByBike(bikeId) }
         .map { entries ->
             calculateMileageDataPoints(entries)
         }
@@ -43,9 +46,9 @@ class AnalyticsViewModel(application: Application) : AndroidViewModel(applicatio
             initialValue = emptyList()
         )
 
-    // Get monthly fuel summary from database
-    val monthlyFuelSummary: StateFlow<List<MonthlySummary>> = database.fuelEntryDao()
-        .getMonthlyFuelSummary(1)
+    // Get monthly fuel summary for the selected bike
+    val monthlyFuelSummary: StateFlow<List<MonthlySummary>> = SelectedBikeManager.selectedBikeId
+        .flatMapLatest { bikeId -> database.fuelEntryDao().getMonthlyFuelSummary(bikeId) }
         .catch { emit(emptyList()) }
         .map { summaries ->
             summaries.map { summary ->

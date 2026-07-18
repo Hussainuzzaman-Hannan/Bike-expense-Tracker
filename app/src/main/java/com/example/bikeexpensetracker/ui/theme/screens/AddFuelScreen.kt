@@ -2,6 +2,7 @@
 
 package com.example.bikeexpensetracker.ui.screens
 
+import com.example.bikeexpensetracker.data.SelectedBikeManager
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -460,7 +461,7 @@ fun AddFuelScreen(
                                 date = Date(),
                                 note = note,
                                 isFullTank = isFullTank,
-                                bikeId = 1
+                                bikeId = SelectedBikeManager.getSelectedBikeId()
                             )
                             viewModel.addFuelEntry(fuelEntry)
                             onFuelSaved()
