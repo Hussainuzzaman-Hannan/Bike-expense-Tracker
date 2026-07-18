@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Bike Expense Tracker</string>
+    <string name="home">Home</string>
+    <string name="add_fuel">Add Fuel</string>
+    <string name="fuel_history">Fuel History</string>
+    <string name="maintenance">Maintenance</string>
+</resources>
