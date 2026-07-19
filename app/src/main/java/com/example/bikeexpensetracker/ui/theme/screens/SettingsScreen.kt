@@ -15,8 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.bikeexpensetracker.viewmodel.SettingsViewModel
 import com.example.bikeexpensetracker.viewmodel.BikeViewModel
+import com.example.bikeexpensetracker.viewmodel.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,6 +33,7 @@ fun SettingsScreen(
 
     val isResetting by viewModel.isResetting.collectAsState()
     val resetSuccess by viewModel.resetSuccess.collectAsState()
+    val bikes by bikeViewModel.bikes.collectAsState()
 
     // Show reset success message
     LaunchedEffect(resetSuccess) {
@@ -128,44 +129,6 @@ fun SettingsScreen(
                             }
                         }
                     } else {
-
-                        // Bike Information Card এর ভেতরে, Column-এর শেষে (isEditing if/else ব্লকের পরে) যোগ করো:
-
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Divider()
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        val bikeCount by bikeViewModel.bikes.collectAsState()
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onManageBikesClick() }
-                                .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column {
-                                Text(
-                                    text = "Manage Bikes",
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = "${bikeCount.size} bike(s) added",
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                                )
-                            }
-                            Icon(
-                                Icons.Default.ArrowForwardIos,
-                                contentDescription = "Manage Bikes",
-                                modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                            )
-                        }
-
                         // Edit mode
                         Column {
                             OutlinedTextField(
@@ -210,6 +173,40 @@ fun SettingsScreen(
                                 }
                             }
                         }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Divider()
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Manage Bikes row
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onManageBikesClick() }
+                            .padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "Manage Bikes",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = "${bikes.size} bike(s) added",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
+                        }
+                        Icon(
+                            Icons.Default.ArrowForwardIos,
+                            contentDescription = "Manage Bikes",
+                            modifier = Modifier.size(16.dp),
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                        )
                     }
                 }
             }

@@ -2,7 +2,6 @@
 
 package com.example.bikeexpensetracker.ui.screens
 
-import com.example.bikeexpensetracker.viewmodel.BikeViewModel
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bikeexpensetracker.model.Expense
 import com.example.bikeexpensetracker.model.ExpenseCategory
+import com.example.bikeexpensetracker.viewmodel.BikeViewModel
 import com.example.bikeexpensetracker.viewmodel.ExpenseViewModel
 import com.example.bikeexpensetracker.viewmodel.SettingsViewModel
 import java.text.SimpleDateFormat
@@ -58,7 +58,7 @@ fun DashboardScreen(
     val totalMaintenanceCost by viewModel.totalMaintenanceCost.collectAsState(initial = 0.0)
     val averageMileage by viewModel.averageMileage.collectAsState(initial = 0.0)
 
-    // Get selected bike from BikeViewModel
+    // Get selected bike from BikeViewModel (source of truth for the active bike)
     val selectedBike by bikeViewModel.selectedBike.collectAsState()
     val bikeName = selectedBike?.name ?: "My Bike"
 

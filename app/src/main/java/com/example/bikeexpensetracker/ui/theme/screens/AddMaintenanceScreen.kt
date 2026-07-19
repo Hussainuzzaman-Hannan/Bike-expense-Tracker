@@ -1,6 +1,5 @@
 package com.example.bikeexpensetracker.ui.screens
 
-import com.example.bikeexpensetracker.data.SelectedBikeManager
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,6 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.bikeexpensetracker.data.SelectedBikeManager
 import com.example.bikeexpensetracker.model.MaintenanceCategory
 import com.example.bikeexpensetracker.model.MaintenanceEntry
 import com.example.bikeexpensetracker.viewmodel.MaintenanceViewModel
